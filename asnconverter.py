@@ -4,7 +4,7 @@ import re
 import sys
 import argparse
 max4byte_asn = 4294967295
-max2byte_asn = 65536
+max2byte_asn = 65535
 asplain_pattern = re.compile("^(\d+)$")
 asdot_pattern = re.compile("^(\d+)\.(\d+)$")
 
@@ -39,11 +39,11 @@ if re.match(asdot_pattern, args.asn):
     (byte12, byte34) = args.asn.split(".")
     for my_asn in (byte12, byte34):
         try:
-            check_value(my_asn, max2byte_asn-1)
+            check_value(my_asn, max2byte_asn)
         except Exception as err:
             print err
             sys.exit(1)
-    asplain = to_asplain(byte12, byte34, max2byte_asn)
+    asplain = to_asplain(byte12, byte34, max2byte_asn+1)
     print "asplain notation: {0}".format(asplain)
 elif re.match(asplain_pattern, args.asn):
     try:
