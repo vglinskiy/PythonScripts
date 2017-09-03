@@ -28,30 +28,32 @@ def to_asdot(asn, max2byte_asn):
     return str(part1)+"."+str(part2)
 
 
-parser = argparse.ArgumentParser(description="Convert 4-byte Autonomous System \
-                      Number in asplain notation to asdot or asdot to asplain")
-parser.add_argument("asn", help="Autonomous System Number",
-                    metavar="<AS Number>")
-args = parser.parse_args()
-
-
-if re.match(asdot_pattern, args.asn):
-    (byte12, byte34) = args.asn.split(".")
-    for my_asn in (byte12, byte34):
+def main():
+    parser = argparse.ArgumentParser(description="Convert 4-byte Autonomous System \
+                  Number in asplain notation to asdot or asdot to asplain")
+    parser.add_argument("asn", help="Autonomous System Number",
+                        metavar="<AS Number>")
+    args = parser.parse_args()
+    if re.match(asdot_pattern, args.asn):
+        (byte12, byte34) = args.asn.split(".")
+        for my_asn in (byte12, byte34):
+            try:
+                check_value(my_asn, max2byte_asn)
+            except Exception as err:
+                print err
+                sys.exit(1)
+        asplain = to_asplain(byte12, byte34, max2byte_asn+1)
+        print "asplain notation: {0}".format(asplain)
+    elif re.match(asplain_pattern, args.asn):
         try:
-            check_value(my_asn, max2byte_asn)
+            check_value(args.asn, max4byte_asn)
         except Exception as err:
             print err
             sys.exit(1)
-    asplain = to_asplain(byte12, byte34, max2byte_asn+1)
-    print "asplain notation: {0}".format(asplain)
-elif re.match(asplain_pattern, args.asn):
-    try:
-        check_value(args.asn, max4byte_asn)
-    except Exception as err:
-        print err
-        sys.exit(1)
-    asdot = to_asdot(args.asn, max2byte_asn)
-    print "asdot notation: {0}".format(asdot)
-else:
-    print "I do not recognize this type of ASN\n"
+        asdot = to_asdot(args.asn, max2byte_asn)
+        print "asdot notation: {0}".format(asdot)
+    else:
+        print "I do not recognize this type of ASN\n"
+
+if __name__ == "main":
+    main()
